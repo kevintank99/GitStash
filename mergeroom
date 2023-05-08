@@ -1,0 +1,78 @@
+<?php
+// echo "Hello World";
+// priority
+// 2: [LUXUS, RESID, COM,JSRUI]
+// 4: [JSRUI, GDBL, JSU_DLX, RESID]
+
+// 4: [ABC, JSRUI]
+// 2: [BCD]
+// 2: [DEF]
+$request = [
+    0=>["reqOccupancy"=>4],
+    1=>["reqOccupancy"=>2],
+    2=> ["reqOccupancy"=>2]
+];
+$available_rooms = [
+    "LUXUS" => 6,
+    "JSRUI" => 4,
+    "RESID" => 2,
+    "COM" => 1,
+    "GDBL" => 1,
+    "JSU_DLX"=>4
+];
+$priority = [
+    "2"=> [
+    0=>["code"=>"LUXUS","roomOccup"=>2],
+    1=>["code"=>"RESID","roomOccup"=>2],
+    2=>["code"=>"COM","roomOccup"=>2],
+    4=>["code"=>"JSRUI","roomOccup"=>2],
+    5=>["code"=>"GDBL","roomOccup"=>2]
+    ],
+    "4"=> [
+    0=>["code"=>"JSRUI","roomOccup"=>4],
+    1=>["code"=>"LUXUS","roomOccup"=>4],
+    2=>["code"=>"JSU_DLX","roomOccup"=>4],
+    4=>["code"=>"RESID","roomOccup"=>4] 
+    ]
+];
+$rooms = [
+    0=>["code"=>"ABC","roomOccup"=>4,'roomCode'=>"ROOM_1"],
+    1=>["code"=>"BCD","roomOccup"=>2,'roomCode'=>"ROOM_2"],
+    2=>["code"=>"DEF","roomOccup"=>2,'roomCode'=>"ROOM_3"]
+];
+$roomLimit = 5;
+$actualLimit = 3 * count($request);
+do {
+    foreach ($rooms as $room) {
+        if (isset($priority[$room['roomOccup']]) && count($priority[$room['roomOccup']])) {
+            $occup = $room['roomOccup'];
+            $tempRooms = array_filter($rooms,function ($room) use ($occup) {
+                return $room['roomOccup'] ==  $occup;
+            });
+         $selected_room =[];
+         $alreadyExist = false;
+         $i = 0;
+         do {
+             foreach ($tempRooms as $tempRoom) {
+                if ($tempRoom['code'] == $priority[$room['roomOccup']][$i]['code']) {
+                    $alreadyExist = true;
+                }
+             }
+             if (!$alreadyExist) {
+                $selected_room = $priority[$room['roomOccup']][$i];
+             }
+             $i++;
+         }
+        while(empty($selected_room));
+         $selected_room['roomCode'] = $room['roomCode'];
+        array_push($rooms,$selected_room);
+        $roomLimit++;
+        if ($available_rooms[$selected_room['code']] > 1) {
+            
+        }
+        }
+    } 
+}
+while ($actualLimit >= $roomLimit )
+?>
+
